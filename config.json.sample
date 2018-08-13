@@ -1,0 +1,12 @@
+{
+  "jira": {
+    "host": "jira.example.com",
+    "auth": {
+      "basic_auth": {
+        "base64":
+          "bG9naW5AamlyYS5leGFtcGxlLmNvbTpwYXNzdzByZA=="
+      },
+      "token": "50d858e0985ecc7f60418aaf0cc5ab587f42c257"
+    }
+  }
+}

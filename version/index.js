@@ -42,6 +42,7 @@ const argv = require("yargs")
     "Creates version for all or selected Jira projects",
     yargs => {
       yargs
+        .wrap(yargs.terminalWidth())
         .positional("version", version)
         .options({
           ...commonOptions,
@@ -58,6 +59,7 @@ const argv = require("yargs")
     "Removes unused versions from all or selected Jira projects",
     yargs => {
       yargs
+        .wrap(yargs.terminalWidth())
         .positional("version", version)
         .options({
           ...commonOptions,
@@ -74,6 +76,7 @@ const argv = require("yargs")
     "Synchronizes versions across all or selected Jira projects",
     yargs => {
       yargs
+        .wrap(yargs.terminalWidth())
         .positional("version", version)
         .options({
           ...commonOptions,

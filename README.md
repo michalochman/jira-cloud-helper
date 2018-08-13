@@ -6,6 +6,11 @@
 
 ## Commands
 
+### JQL Search
+
+    node search -h
+    node search <jql> [options]
+
 ### Project Versions
 
 > All commands run with against all projects by default. Use `--projects` option to supply a list of project keys.

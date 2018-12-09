@@ -7,6 +7,7 @@ const config = require("../config.json");
 const add = require("./add").main;
 const clean = require("./clean").main;
 const edit = require("./edit").main;
+const list = require("./list").main;
 
 // common options
 const verbose = { describe: "Show verbose output", type: "count" };
@@ -30,7 +31,8 @@ const commonOptions = {
 const versionOptions = {
   add: { startDate, releaseDate, released, archived },
   clean: {},
-  edit: { startDate, releaseDate, released, archived, name }
+  edit: { startDate, releaseDate, released, archived, name },
+  list: {}
 };
 
 const argv = require("yargs")
@@ -87,6 +89,19 @@ const argv = require("yargs")
           "Set start date of version 1.2.3 to 2018-08-12"
         );
     }
+  )
+  .command(
+    "list [options]",
+    "List versions from all or selected Jira projects",
+    yargs => {
+      yargs
+        .wrap(yargs.terminalWidth())
+        .options({
+          ...commonOptions,
+          ...versionOptions.list
+        })
+        .example("$0 --projects DINO", "List version for project DINO");
+    }
   ).argv;
 
 var jira = new JiraClient({
@@ -116,6 +131,8 @@ switch (command) {
     return clean(argv, jira, versionConfig);
   case "edit":
     return edit(argv, jira, versionConfig);
+  case "list":
+    return list(argv, jira, versionConfig);
   default:
     console.error("No valid command selected");
     return;

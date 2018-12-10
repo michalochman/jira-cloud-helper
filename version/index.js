@@ -32,7 +32,7 @@ const versionOptions = {
   add: { startDate, releaseDate, released, archived },
   clean: {},
   edit: { startDate, releaseDate, released, archived, name },
-  list: {}
+  list: { released, archived }
 };
 
 const argv = require("yargs")

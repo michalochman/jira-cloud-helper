@@ -102,7 +102,8 @@ const argv = require("yargs")
         })
         .example("$0 --projects DINO", "List version for project DINO");
     }
-  ).argv;
+  )
+  .demandCommand().argv;
 
 var jira = new JiraClient({
   host: config.jira.host,

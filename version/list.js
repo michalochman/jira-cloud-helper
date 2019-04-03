@@ -1,4 +1,5 @@
 const JiraClient = require("jira-connector");
+const semver = require("semver");
 
 async function getProjects(argv, jira) {
   const projects = await jira.project.getAllProjects();
@@ -26,26 +27,66 @@ async function getVersions(argv, jira, project, options) {
   return versions;
 }
 
+const specialVersionsList = ["develop", "rc1"];
+
+function compareVersions(v1, v2) {
+  try {
+    return semver.rcompare(v1, v2);
+  } catch (e) {
+    return 1;
+  }
+}
+
+function sort(a, b) {
+  if (a == b) {
+    return 0;
+  }
+
+  return a > b ? 1 : -1;
+}
+
+function sortBy(property) {
+  return function(a, b) {
+    return sort(a[property], b[property]);
+  };
+}
+
 async function main(argv, jira, options) {
   const projects = await getProjects(argv, jira);
 
   const versions = await Promise.all(
     projects.map(async project => {
       try {
-        const versions = await getVersions(argv, jira, project, options);
+        const projectVersions = await getVersions(argv, jira, project, options);
 
-        if (!versions.length) {
+        if (!projectVersions.length) {
           return;
         }
 
-        console.log(
-          `Versions in ${project.key}: ${versions.map(v => v.name).join(", ")}`
-        );
+        const specialVersions = projectVersions
+          .filter(v => specialVersionsList.indexOf(v.name) !== -1)
+          .map(v => v.name);
+        const semverVersions = projectVersions
+          .filter(v => specialVersionsList.indexOf(v.name) === -1)
+          .sort(compareVersions)
+          .map(v => v.name);
+
+        return {
+          key: project.key,
+          versions: specialVersions.concat(semverVersions).join(", ")
+        };
       } catch (reason) {
         console.error(reason);
       }
     })
   );
+
+  versions
+    .filter(x => x)
+    .sort(sortBy("key"))
+    .forEach(project => {
+      console.log(`Versions in ${project.key}:\n${project.versions}\n`);
+    });
 }
 
 module.exports = {
